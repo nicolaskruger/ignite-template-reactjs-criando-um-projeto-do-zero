@@ -1,1 +1,48 @@
 // TODO
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 2rem;
+  margin-top: 4rem;
+  button {
+    background: var(--Background);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 48px;
+    h1 {
+      color: var(--Heading);
+      font-weight: bold;
+      font-size: 1.75rem;
+      letter-spacing: 0.031rem;
+      margin-bottom: 8px;
+    }
+    p {
+      font-weight: normal;
+      font-size: 1.125rem;
+      margin-bottom: 24px;
+      text-align: start;
+    }
+    > div {
+      display: flex;
+      > div {
+        color: var(--Info);
+        display: flex;
+        align-items: center;
+        gap: 2px;
+      }
+      > div:first-child {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+.loadMore {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: var(--Highlight);
+}
