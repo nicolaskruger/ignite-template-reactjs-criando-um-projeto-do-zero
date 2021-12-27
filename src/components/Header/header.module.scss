@@ -7,4 +7,10 @@
   align-items: center;
   height: 5rem;
   padding: 0 2rem;
+  button {
+    background-color: transparent;
+    img {
+      cursor: pointer;
+    }
+  }
 }

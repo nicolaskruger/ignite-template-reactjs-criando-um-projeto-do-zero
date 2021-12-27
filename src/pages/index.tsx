@@ -16,13 +16,7 @@ import { useRouter } from 'next/router';
 const toPostPaginator = (response: ApiSearchResponse): PostPagination => {
   const data: Post[] = response.results.map(post => ({
     uid: post.uid,
-    first_publication_date: format(
-      new Date(post.first_publication_date),
-      'MM LLL yyyy',
-      {
-        locale: ptBR,
-      }
-    ),
+    first_publication_date: post.first_publication_date,
     data: {
       author: post.data.author,
       subtitle: post.data.subtitle,
@@ -58,10 +52,10 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
 
   const [post, setPost] = useState(postsPagination);
 
-  const { push } = useRouter();
+  const route = useRouter();
 
   const handleClickPost = (uid: string) => {
-    push(`/post/${uid}`);
+    route.push(`/post/${uid}`, `/post/${uid}`, {});
   };
 
   const handleLoadMore = async () => {
@@ -86,7 +80,15 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
             <div>
               <div>
                 <AiOutlineCalendar />
-                <time>{result.first_publication_date}</time>
+                <time>
+                  {format(
+                    new Date(result.first_publication_date),
+                    'dd LLL yyyy',
+                    {
+                      locale: ptBR,
+                    }
+                  )}
+                </time>
               </div>
               <div>
                 <AiOutlineUser />
