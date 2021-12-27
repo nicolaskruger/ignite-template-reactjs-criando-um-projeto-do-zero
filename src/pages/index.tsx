@@ -11,6 +11,7 @@ import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 const toPostPaginator = (response: ApiSearchResponse): PostPagination => {
   const data: Post[] = response.results.map(post => ({
@@ -57,6 +58,12 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
 
   const [post, setPost] = useState(postsPagination);
 
+  const { push } = useRouter();
+
+  const handleClickPost = (uid: string) => {
+    push(`/post/${uid}`);
+  };
+
   const handleLoadMore = async () => {
     const result = await fetch(post.next_page);
     const data: PostPagination = toPostPaginator(await result.json());
@@ -73,7 +80,7 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
       </Head>
       <main className={styles.container}>
         {post.results.map(result => (
-          <button key={result.uid} type="button">
+          <button key={result.uid} type="button" onClick={() => handleClickPost(result.uid)}>
             <h1>{result.data.title}</h1>
             <p>{result.data.subtitle}</p>
             <div>
