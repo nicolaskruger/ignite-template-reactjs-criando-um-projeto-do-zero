@@ -5,6 +5,7 @@ import Prismic from '@prismicio/client';
 import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
@@ -43,9 +44,11 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
+  preview: boolean,
+  previewData: any,
 }
 
-const Home: NextPage<HomeProps> = ({ postsPagination }) => {
+const Home: NextPage<HomeProps> = ({ postsPagination, preview }) => {
   // TODO
 
   const [post, setPost] = useState(postsPagination);
@@ -70,6 +73,13 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
       <Head>
         <title>Zero Project | Home</title>
       </Head>
+      {preview && (
+        <aside>
+          <Link href="/api/exit-preview">
+            <a>Sair do modo Preview</a>
+          </Link>
+        </aside>
+      )}
       <main className={styles.container}>
         {post.results.map(result => (
           <button key={result.uid} type="button" onClick={() => handleClickPost(result.uid)}>
@@ -96,13 +106,17 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
 export default Home;
 
 
-export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async ({
+  preview = false,
+  previewData,
+}) => {
   const prismic = getPrismicClient();
   const postsResponse = await prismic.query(
     [Prismic.predicates.at('document.type', 'posts')],
     {
       pageSize: 1,
       fetch: ['posts.title', 'posts.author', 'posts.subtitle'],
+      ref: previewData?.ref ?? null,
     }
   );
 
@@ -111,6 +125,7 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   return {
     props: {
       postsPagination: toPostPaginator(postsResponse),
+      preview,
     },
     revalidate: 60 * 30, // 1h
   };

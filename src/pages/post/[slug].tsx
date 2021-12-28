@@ -9,6 +9,7 @@ import styles from './post.module.scss';
 import { RichText } from 'prismic-dom';
 import { dateFormat } from '../../services/dateFormat';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 interface Post {
   first_publication_date: string | null;
@@ -53,6 +54,18 @@ const Post: NextPage<PostProps> = ({ post }) => {
     return <div>Carregando...</div>
   }
 
+  useEffect(() => {
+    let script = document.createElement("script");
+    let anchor = document.getElementById("inject-comments-for-uterances");
+    script.setAttribute("src", "https://utteranc.es/client.js");
+    script.setAttribute("crossorigin", "anonymous");
+    script.setAttribute("async", true);
+    script.setAttribute("repo", "nicolaskruger/ignite-template-reactjs-criando-um-projeto-do-zero");
+    script.setAttribute("issue-term", "pathname");
+    script.setAttribute("theme", "github-dark");
+    anchor.appendChild(script);
+  }, []);
+
   return (
     <>
       <Head>
@@ -88,7 +101,9 @@ const Post: NextPage<PostProps> = ({ post }) => {
               </div>
             );
           })}
+          <div id="inject-comments-for-uterances"></div>
         </section>
+
       </main>
     </>
   );
