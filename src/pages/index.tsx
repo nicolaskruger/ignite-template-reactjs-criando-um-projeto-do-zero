@@ -2,16 +2,14 @@ import { GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import { AiOutlineCalendar, AiOutlineUser } from 'react-icons/ai';
 import Prismic from '@prismicio/client';
-import { RichText } from 'prismic-dom';
-import { format } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
+import { dateFormat } from '../services/dateFormat';
 
 const toPostPaginator = (response: ApiSearchResponse): PostPagination => {
   const data: Post[] = response.results.map(post => ({
@@ -80,15 +78,7 @@ const Home: NextPage<HomeProps> = ({ postsPagination }) => {
             <div>
               <div>
                 <AiOutlineCalendar />
-                <time>
-                  {format(
-                    new Date(result.first_publication_date),
-                    'dd LLL yyyy',
-                    {
-                      locale: ptBR,
-                    }
-                  )}
-                </time>
+                <time>{dateFormat(result.first_publication_date)}</time>
               </div>
               <div>
                 <AiOutlineUser />
