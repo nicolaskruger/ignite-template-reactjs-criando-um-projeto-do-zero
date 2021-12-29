@@ -6,3 +6,9 @@ export const dateFormat = (date: string): string => {
         locale: ptBR,
     });
 };
+
+export const lastDateFormat = (date: string): string => {
+    return format(new Date(date), 'HH:mm', {
+        locale: ptBR,
+    });
+};

@@ -4,15 +4,18 @@ import Prismic from '@prismicio/client';
 import { AiOutlineCalendar, AiOutlineUser, AiOutlineClockCircle } from 'react-icons/ai';
 import { getPrismicClient } from '../../services/prismic';
 
+import Link from "next/link";
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 import { RichText } from 'prismic-dom';
-import { dateFormat } from '../../services/dateFormat';
+import { dateFormat, lastDateFormat } from '../../services/dateFormat';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
+  uid: string;
   data: {
     title: string;
     banner: {
@@ -30,9 +33,25 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  next: Post | null;
+  prev: Post | null;
 }
 
-const Post: NextPage<PostProps> = ({ post }) => {
+const NavigatorPost: FC<{ post: Post, label: string }> = ({ post, label }) => {
+
+  const { push } = useRouter();
+
+  return (
+    <button type='button' onClick={() => push(`/post/${post.uid}`)}>
+      <h3>
+        {post.data.title}
+      </h3>
+      <p>{label}</p>
+    </button>
+  )
+}
+
+const Post: NextPage<PostProps> = ({ post, prev, next }) => {
   // TODO
 
   const router = useRouter();
@@ -64,6 +83,9 @@ const Post: NextPage<PostProps> = ({ post }) => {
     script.setAttribute("issue-term", "pathname");
     script.setAttribute("theme", "github-dark");
     anchor.appendChild(script);
+    return () => {
+      anchor.removeChild(script);
+    }
   }, []);
 
   return (
@@ -89,6 +111,7 @@ const Post: NextPage<PostProps> = ({ post }) => {
               <p>{`${timeToRead(post)} min`}</p>
             </div>
           </span>
+          <p>{`*editado em ${dateFormat(post.last_publication_date)}, as ${lastDateFormat(post.last_publication_date)}`}</p>
           {post.data.content.map((content, index) => {
             return (
               <div key={index}>
@@ -101,6 +124,17 @@ const Post: NextPage<PostProps> = ({ post }) => {
               </div>
             );
           })}
+          <nav className={styles.Nav}>
+            <div />
+            <span>
+              {prev ? (
+                <NavigatorPost post={prev} label='Post anterior' />
+              ) : (<button />)}
+              {next ? (
+                <NavigatorPost post={next} label='Próximo post' />
+              ) : (<button />)}
+            </span>
+          </nav>
           <div id="inject-comments-for-uterances"></div>
         </section>
 
@@ -139,9 +173,30 @@ export const getStaticProps: GetStaticProps<PostProps> = async context => {
 
   });
 
+  const nextResponse = (await prismic.query(
+    // Replace `article` with your doc type
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date desc]',
+    },
+  )).results[0] || null;
+  const prevResponse = (await prismic.query(
+    // Replace `post` with your doc type
+    Prismic.Predicates.at('document.type', 'posts'),
+    {
+      pageSize: 1,
+      after: response?.id,
+      orderings: '[document.first_publication_date]',
+    },
+  )).results[0] || null;
+
   // TODO
   return {
     props: {
+      next: nextResponse,
+      prev: prevResponse,
       post: {
         ...response,
         first_publication_date: response.first_publication_date,

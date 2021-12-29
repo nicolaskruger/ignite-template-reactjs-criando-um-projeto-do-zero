@@ -26,7 +26,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 64px;
+      margin-bottom: 15px;
       div {
         gap: 5px;
         align-items: center;
@@ -37,6 +37,13 @@
         }
       }
     }
+
+    > p {
+      color: var(--Info);
+      font-size: 0.875rem;
+      margin-bottom: 64px;
+    }
+
     h2 {
       font-size: 2.25rem;
       margin-bottom: 20px;
@@ -47,5 +54,39 @@
       color: var(--Body);
       margin-bottom: 15px;
     }
+  }
+}
+
+.Nav {
+  display: flex;
+  flex-direction: column;
+  > div {
+    height: 1px;
+    background-color: var(--Info);
+    opacity: 0.1;
+    margin-bottom: 20px;
+  }
+  > span {
+    display: flex;
+    justify-content: space-between;
+    button {
+      background-color: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      h3 {
+        font-weight: normal;
+        color: var(--Heading);
+      }
+      p {
+        color: var(--Highlight);
+      }
+    }
+  }
+  button:first-child {
+    align-items: flex-start;
+  }
+  button:last-child {
+    align-items: flex-end;
   }
 }
